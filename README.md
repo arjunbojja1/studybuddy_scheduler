@@ -5,6 +5,8 @@ It offers several scheduling options and displays motivational quotes utilizing 
 
 StudyBuddy Scheduler is built in Python and provides a web based interface using ReactPy and runs from the command line.
 
+StudyBuddy Scheduler was created by Arjun Bojja and Ryan Flynn.
+
 ---
 
 ## Features
