@@ -1,7 +1,13 @@
+from scheduler.strategy import SchedulingStrategy
+
 class SchedulerEngine:
-    def __init__(self, course, strategy):
-        self.course = course
+    def __init__(self, courses, strategy):
+        self.courses = courses
         self.strategy = strategy
         
     def generate_schedule(self):
-        pass
+        if not isinstance(self.strategy, SchedulingStrategy):
+            raise ValueError("Invalid scheduling strategy")
+        schedule = self.strategy.schedule(self.courses)
+        print(f"Generated schedule: {schedule}")
+        return schedule
