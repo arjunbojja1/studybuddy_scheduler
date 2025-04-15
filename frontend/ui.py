@@ -172,7 +172,7 @@ def StudyBuddyUI():
                         }},
                         form_input("Course Name", entry["course"], lambda val, i=i: update_course_field(i, "course", val), "text", "e.g. ENES102"),
                         form_input("Deadline", entry["deadline"], lambda val, i=i: update_course_field(i, "deadline", val), "date"),
-                        form_input("Estimated Hours", entry["hours"], lambda val, i=i: update_course_field(i, "hours", val), "number", "e.g. 5"),
+                        form_input("Estimated Hours", entry["hours"], lambda val, i=i: update_course_field(i, "hours", max(0, float(val) if val else 0)), "number", "e.g. 5", min_val="0"),
                         html.button(
                             {
                                 "type": "button",
@@ -259,7 +259,7 @@ def StudyBuddyUI():
     )
 
 
-def form_input(label, value, setter, input_type, placeholder=""):
+def form_input(label, value, setter, input_type, placeholder="", min_val=None):
     return html.div(
         {"style": {"marginBottom": "12px"}},
         html.label({"style": label_style()}, label),
