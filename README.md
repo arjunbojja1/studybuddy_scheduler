@@ -23,5 +23,32 @@ StudyBuddy Scheduler was created by Arjun Bojja and Ryan Flynn.
 
 ---
 
-## TODO: 
-How to Run the Program
+## How to Run the Program
+Before you begin, make sure you have ```Python``` installed.
+
+1. ** Create a virtual environment **
+```bash
+python -m venv venv
+```
+If this does not work, execute the following:
+```bash
+python3 -m venv venv
+```
+2. ** Activate your virtual environment **
+### macOS
+```bash
+source venv/bin/activate
+```
+### Windows
+```bash
+venv\Scripts\activate
+```
+3. ** Install the required dependencies **
+```bash
+pip install -r requirements.txt
+```
+4. ** Run the app **
+```bash
+python app.py
+```
+
