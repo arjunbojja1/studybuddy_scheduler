@@ -47,7 +47,7 @@ class EvenDistributionStrategy(SchedulingStrategy):
         for course in courses:
             try:
                 total_minutes = int(float(course["hours"])) * 60
-                deadline = datetime.strptime(course["deadline"], "%m/%d/%Y").date()
+                deadline = parse_date(course["deadline"])
                 days = (deadline - today).days + 1
                 if days <= 0:
                     days = 1
