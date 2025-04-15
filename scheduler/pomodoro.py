@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from scheduler_engine import parse_date
+from scheduler.scheduler_engine import parse_date
 
 class PomodoroScheduler:
     def schedule(self, courses):
