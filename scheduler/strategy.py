@@ -9,7 +9,7 @@ class UrgencyStrategy(SchedulingStrategy):
         
         def parse_deadline(deadline):
             try:
-                return datetime.strptime(deadline, "%Y-%m-%d")
+                return datetime.strptime(deadline, "%m/%d/%Y")
             except:
                 return datetime.max
     
