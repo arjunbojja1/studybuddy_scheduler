@@ -12,9 +12,8 @@ class UrgencyStrategy(SchedulingStrategy):
                 return datetime.strptime(deadline, "%Y-%m-%d")
             except:
                 return datetime.max
-        
-        
-        sorted_courses = sorted(courses, key=lambda course: course['deadline'])
+    
+        sorted_courses = sorted(courses, key=lambda course: parse_deadline(course['deadline']))
         return [{"course": course['course'], "block": "study", "duration": int(course['hours']) * 60} for course in sorted_courses]
     
 class EvenDistributionStrategy(SchedulingStrategy):
