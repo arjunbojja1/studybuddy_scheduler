@@ -1,6 +1,7 @@
 from reactpy import component, html, use_state, event
 from api.quotes import QuoteFetcher
 from scheduler.scheduler_engine import SchedulerEngine
+from collections import defaultdict
 import random
 
 
@@ -56,9 +57,32 @@ def StudyBuddyUI():
         
         scheduler = SchedulerEngine(strategy=strategy)
         schedule_blocks = scheduler.generate_schedule(course_entries)
-        result_text = "\n".join(f"{block.get('date', 'Today')} - {block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
+        
+        grouped = defaultdict(list)
+        for block in schedule_blocks:
+            grouped[block["date"]].append(block)
             
-        set_result(result_text)
+        calendar_view = []
+        for date in sorted(grouped.keys()):
+            calendar_view.append(html.h4({"style": {"marginTop": "20px", "color": "#2c3e50"}}, date))
+            calendar_view.extend([
+                html.div(
+                    {
+                        "style": {
+                            "padding": "8px 12px",
+                            "marginBottom": "8px",
+                            "borderRadius": "6px",
+                            "backgroundColor": "#e3f2fd" if block['block'] == "study" else "#fce4ec",
+                            "color": "#2d3436",
+                            "fontWeight": "500",
+                        }
+                    },
+                    f"{block['course']}: {block['block'].capitalize()} for {block['duration']} minutes"
+                )
+                for block in grouped[date]
+            ])
+            
+        set_result(calendar_view)
         set_quote(QuoteFetcher().get_quote())
 
     return html.div(
@@ -251,7 +275,7 @@ def StudyBuddyUI():
                     "boxShadow": "0 0 8px rgba(0, 0, 0, 0.05)"
                 }},
                 html.h3({"style": {"color": "#343a40"}}, "Your Schedule"),
-                html.pre({"style": {"whiteSpace": "pre-wrap", "color": "#495057", "fontSize": "15px"}}, result),
+                html.div({"style": {"marginTop": "10px"}}, result),
                 html.h3({"style": {"marginTop": "20px", "color": "#343a40"}}, "Motivational Quote"),
                 html.blockquote({"style": {"fontStyle": "italic", "color": "#6c757d"}}, quote)
             )

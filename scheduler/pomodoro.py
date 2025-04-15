@@ -30,7 +30,7 @@ class PomodoroScheduler:
                 
                 blocks.append({
                     "course": course["course"],
-                    "block": "pomodoro",
+                    "block": "study",
                     "duration": duration,
                     "date": str(assigned_date)
                 })
