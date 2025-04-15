@@ -8,7 +8,10 @@ class UrgencyStrategy(SchedulingStrategy):
     def schedule(self, courses):
         
         def parse_deadline(deadline):
-            return datetime.strptime(deadline, "%Y-%m-%d")
+            try:
+                return datetime.strptime(deadline, "%Y-%m-%d")
+            except:
+                return datetime.max
         
         
         sorted_courses = sorted(courses, key=lambda course: course['deadline'])
