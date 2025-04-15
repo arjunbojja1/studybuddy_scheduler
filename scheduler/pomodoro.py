@@ -23,11 +23,8 @@ class PomodoroScheduler:
                 continue # Invalid input, skip this course
             
             while time_remaining > 0:
-                print(date_index)
                 duration = min(25, time_remaining)
                 assigned_date = date_range[date_index % len(date_range)]
-                print(f'[{course['course']}] Assigning {duration} minutes on {assigned_date}')
-                print(assigned_date)
                 schedule.append({
                     "course": course["course"],
                     "block": "study",
