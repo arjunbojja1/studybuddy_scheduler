@@ -1,3 +1,4 @@
+from datetime import datetime
 from scheduler.strategy import EvenDistributionStrategy, UrgencyStrategy
 from scheduler.pomodoro import PomodoroScheduler
 
@@ -14,3 +15,9 @@ class SchedulerEngine:
             return EvenDistributionStrategy().schedule(courses)
         else:
             raise ValueError(f"Unknown strategy: {self.strategy}")
+        
+def _parse_date(self, date_str):
+        try:
+            return datetime.strptime(date_str.strip(), "%md/%d/%Y").date()
+        except:
+            return datetime.today().date()

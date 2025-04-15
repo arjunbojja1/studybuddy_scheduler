@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from scheduler_engine import _parse_date as parse_date
 
 # TODO: Fix UrgencyStrategy to correctly handle sorting by deadline.
 
@@ -23,13 +24,33 @@ class UrgencyStrategy(SchedulingStrategy):
         return [{"course": course['course'], "block": "study", "duration": int(course['hours']) * 60} for course in sorted_courses]
     
 class EvenDistributionStrategy(SchedulingStrategy):
-    def schedule(self, courses):      
-        total_time = sum(int(course['hours']) for course in courses)
+    def schedule(self, courses): 
+        today = datetime.today().date()
+        schedule = []     
         
-        if total_time == 0:
-            return []
-        
-        return [
-            {"course": course['course'], "block": "study", "duration": int(course['hours']) * 60}
-            for course in courses
-        ]
+        for course in sorted(courses, key=lambda c: parse_date(c['deadline'])):
+            try:
+                total_minutes = int(float(course["hours"])) * 60
+                deadline = datetime.strptime(course["deadline"], "%m/%d/%Y").date()
+                days = (deadline - today).days + 1
+                if days <= 0:
+                    days = 1
+            except (ValueError, KeyError):
+                continue
+            
+            minutes_per_day = total_minutes // days
+            extra_minutes = total_minutes % days
+            
+            for i in range(days):
+                date = today + timedelta(days=i)
+                duration = minutes_per_day + (1 if i < extra_minutes else 0)
+                if duration > 0:
+                    schedule.append({
+                        "course": course["course"],
+                        "block": "study",
+                        "duration": duration,
+                        "date": str(date)
+                    })
+                    
+        return schedule
+            

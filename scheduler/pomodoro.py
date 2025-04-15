@@ -1,14 +1,15 @@
 from datetime import datetime, timedelta
+from scheduler_engine import _parse_date as parse_date
 
 class PomodoroScheduler:
     def schedule(self, courses):
         today = datetime.today().date()
         schedule = []
         
-        for course in sorted(course, key=lambda c: self._parse_date(c['deadline'])):
+        for course in sorted(courses, key=lambda c: parse_date(c['deadline'])):
             try:
                 time_remaining = int(course["hours"]) * 60 # Convert hours to minutes
-                deadline = self._parse_date(course["deadline"])
+                deadline = parse_date(course["deadline"])
                 days = (deadline - today).days + 1
                 
                 if days <= 0:
@@ -31,9 +32,3 @@ class PomodoroScheduler:
                 if current_day > deadline:
                     current_day = today
         return schedule
-    
-    def _parse_date(self, date_str):
-        try:
-            return datetime.strptime(date_str.strip(), "%md/%d/%Y").date()
-        except:
-            return datetime.today().date()
