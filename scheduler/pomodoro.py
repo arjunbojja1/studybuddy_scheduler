@@ -10,26 +10,27 @@ class PomodoroScheduler:
             try:
                 time_remaining = int(float(course["hours"])) * 60 # Convert hours to minutes
                 deadline = parse_date(course["deadline"])
-                days = (deadline - today).days + 1
-
+                
                 if deadline < today:
                     continue
+                
+                date_range = [today + timedelta(days=i) for i in range((deadline - today).days + 1)]
+                if len(date_range) == 0:
+                    continue
+                
             except (ValueError, KeyError):
                 continue # Invalid input, skip this course
             
-            current_day = today
+            date_index = 0
             while time_remaining > 0:
                 duration = min(25, time_remaining)
                 schedule.append({
                     "course": course["course"],
                     "block": "study",
                     "duration": duration,
-                    "date": str(current_day)
+                    "date": str(date_range[date_index])
                 })
                 time_remaining -= duration
-                if (current_day + timedelta(days=1)) > deadline:
-                    current_day = today
-                else:
-                    current_day += timedelta(days=1)
+                date_index = (date_index + 1) % len(date_range)
                     
         return schedule
