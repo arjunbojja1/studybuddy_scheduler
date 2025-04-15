@@ -10,205 +10,7 @@ def radial_gradient(hovered):
         return "radial-gradient(circle at center, #e0f7fa, #c3e6cb, #f0f4f8)"
     else:
         return "radial-gradient(circle at top left, #f0f4f8, #e4eaf1)"
-
-def calendar_view(schedule_blocks):
-    grouped = defaultdict(list)
-    for block in schedule_blocks:
-        grouped[block["date"]].append(block)
-        
-        expanded_days, set_expanded_days = use_state(set())
-        completed_tasks, set_completed_tasks = use_state(set())
-        modal_day, set_modal_day = use_state(None)
-        
-        def toggle_day(date):
-            def handler(_):
-                updated = set(expanded_days)
-                if date in updated:
-                    updated.remove(date)
-                else:
-                    updated.add(date)
-                set_expanded_days(updated)
-            return handler
-        
-        def toggle_completed(index):
-            def handler(_):
-                updated = set(completed_tasks)
-                if index in updated:
-                    updated.remove(index)
-                else:
-                    updated.add(index)
-                set_completed_tasks(updated)
-            return handler
-        
-        def open_modal(date):
-            def handler(_):
-                set_modal_day(date)
-            return handler
-        
-        def close_modal():
-            def handler(_):
-                set_modal_day(None)
-            return handler
-        
-        result = []
-        
-        for date in sorted(grouped.keys()):
-            blocks = grouped[date]
-            total_time = sum(block["duration"] for block in blocks if block["block"] == "study")
-            completed_time = sum(b["duration"]for i, b in enumerate(blocks) if b["block"] == "study" and f"{date}-{i}" in completed_tasks)
-            percent = int((completed_time / total_time) * 100) if total_time > 0 else 0
             
-            result.append(
-                html.div(
-                    {
-                        "style": {
-                            "border": "1px solid #ccc",
-                            "marginBottom": "15px",
-                            "padding": "10px",
-                            "borderRadius": "8px",
-                            "backgroundColor": "#f8f9fa",
-                            "boxShadow": "0 0 5px rgba(0, 0, 0, 0.05)",
-                            "position": "relative",
-                        }
-                    },
-                    html.div(
-                        {
-                            "style": {
-                                "display": "flex",
-                                "justifyContent": "space-between",
-                                "alignItems": "center",
-                            }
-                        },
-                            html.h4(
-                                {
-                                  "on_click": toggle_day(date),
-                                  "style": {
-                                      "cursor": "pointer",
-                                      "color": "#1976d2",
-                                      "margin": 0,
-                                  },
-                                  "title": f"{len(blocks)} tasks scheduled"
-                                },
-                                f"{'▼' if date in expanded_days else '▶'} {date}"
-                            ),
-                            html.button(
-                                {
-                                    "style": {
-                                        "border": "none",
-                                        "backgroundColor": "transparent",
-                                        "cursor": "pointer",
-                                        "fontSize": "14px",
-                                        "color": "#555"
-                                    },
-                                    "on_click": open_modal(date)
-                                },
-                                "Details"
-                            ), 
-                    )
-                ),
-                
-                html.div(
-                    {
-                        "style": {
-                            "height": "6px",
-                            "width": "100%",
-                            "marginTop": "8px",
-                            "borderRadius": "3px",
-                            "background": "#e0e0e0",
-                        }
-                    },
-                    html.div(
-                        {
-                            "style": {
-                                "height": "100%",
-                                "width": f"{percent}%",
-                                "backgroundColor": "#4caf50",
-                                "borderRadius": "3px",
-                            }
-                        }
-                    )
-            ),
-                
-            html.div(
-                    [
-                        html.div(
-                            {
-                                "style": {
-                                    "marginTop": "10px",
-                                    "padding": "6px 10px",
-                                    "backgroundColor": "#e3f2fd" if block["block"] == "study" else "#fce4ec",
-                                    "borderRadius": "6px",
-                                    "display": "flex",
-                                    "alignItems": "center",
-                                    "justifyContent": "space-between",
-                                    "marginBottom": "6px"
-                                }
-                            },
-                            html.span(
-                                html.input({
-                                    "type": "checkbox",
-                                    "checked": f"{date}-{i}" in completed_tasks,
-                                    "on_change": toggle_completed(f"{date}-{i}")
-                                })
-                            ),
-                            html.span(
-                                f"{block['course']}: {block['block'].capitalize()} for {block['duration']} min"
-                            )
-                        )
-                        for i, block in enumerate(blocks)
-                    ] if date in expanded_days else []
-                )
-            )
-
-    # Modal View
-    if modal_day:
-        modal_blocks = grouped[modal_day]
-        modal_content = [
-            html.h3({}, f"Full Schedule for {modal_day}"),
-            html.ul(
-                [
-                    html.li({}, f"{block['course']}: {block['block']} – {block['duration']} min")
-                    for block in modal_blocks
-                ]
-            ),
-            html.button({"on_click": close_modal}, "Close")
-        ]
-
-        result.append(
-            html.div(
-                {
-                    "style": {
-                        "position": "fixed",
-                        "top": 0,
-                        "left": 0,
-                        "width": "100vw",
-                        "height": "100vh",
-                        "backgroundColor": "rgba(0,0,0,0.4)",
-                        "display": "flex",
-                        "justifyContent": "center",
-                        "alignItems": "center",
-                        "zIndex": 1000
-                    }
-                },
-                html.div(
-                    {
-                        "style": {
-                            "backgroundColor": "#fff",
-                            "padding": "20px",
-                            "borderRadius": "8px",
-                            "boxShadow": "0 0 20px rgba(0,0,0,0.3)",
-                            "maxWidth": "500px",
-                            "width": "90%"
-                        }
-                    },
-                    *modal_content
-                )
-            )
-        )
-
-    return html.div({}, *result)
-            
-
 @component
 def StudyBuddyUI():
     course_entries, set_course_entries = use_state([
@@ -247,39 +49,15 @@ def StudyBuddyUI():
 
     @event(prevent_default=True)
     async def handle_submit(event):
-        # Cgeck if all entries are filled
+        # Check if all entries are filled
         if not all(entry["course"] and entry["deadline"] and entry["hours"] for entry in course_entries):
             set_result("Please fill in all fields.")
             return
         
         scheduler = SchedulerEngine(strategy=strategy)
         schedule_blocks = scheduler.generate_schedule(course_entries)
-        
-        grouped = defaultdict(list)
-        for block in schedule_blocks:
-            grouped[block["date"]].append(block)
             
-        calendar_view = []
-        for date in sorted(grouped.keys()):
-            calendar_view.append(html.h4({"style": {"marginTop": "20px", "color": "#2c3e50"}}, date))
-            calendar_view.extend([
-                html.div(
-                    {
-                        "style": {
-                            "padding": "8px 12px",
-                            "marginBottom": "8px",
-                            "borderRadius": "6px",
-                            "backgroundColor": "#e3f2fd" if block['block'] == "study" else "#fce4ec",
-                            "color": "#2d3436",
-                            "fontWeight": "500",
-                        }
-                    },
-                    f"{block['course']}: {block['block'].capitalize()} for {block['duration']} minutes"
-                )
-                for block in grouped[date]
-            ])
-            
-        set_result(calendar_view)
+        set_result(CalendarView(schedule_blocks))
         set_quote(QuoteFetcher().get_quote())
 
     return html.div(
@@ -479,6 +257,158 @@ def StudyBuddyUI():
         )
     )
 
+@component
+def CalendarView(schedule_blocks):
+    expanded_days, set_expanded_days = use_state(set())
+    completed_tasks, set_completed_tasks = use_state(set())
+    modal_day, set_modal_day = use_state(None)
+
+    grouped = defaultdict(list)
+    for block in schedule_blocks:
+        grouped[block["date"]].append(block)
+
+    def toggle_day(date):
+        def handler(_):
+            expanded = set(expanded_days)
+            if date in expanded:
+                expanded.remove(date)
+            else:
+                expanded.add(date)
+            set_expanded_days(expanded)
+        return handler
+
+    def toggle_complete(block_key):
+        def handler(_):
+            updated = set(completed_tasks)
+            if block_key in updated:
+                updated.remove(block_key)
+            else:
+                updated.add(block_key)
+            set_completed_tasks(updated)
+        return handler
+
+    def open_modal(date):
+        def handler(_):
+            set_modal_day(date)
+        return handler
+
+    def close_modal(_):
+        set_modal_day(None)
+
+    view = []
+    for date in sorted(grouped.keys()):
+        blocks = grouped[date]
+        total = sum(b["duration"] for b in blocks if b["block"] == "study")
+        done = sum(b["duration"] for i, b in enumerate(blocks) if f"{date}-{i}" in completed_tasks and b["block"] == "study")
+        percent = int((done / total) * 100) if total else 0
+
+        view.append(html.div(
+            {
+                "style": {
+                    "backgroundColor": "#292b40",
+                    "borderRadius": "8px",
+                    "padding": "12px",
+                    "marginBottom": "16px",
+                    "boxShadow": "0 0 8px rgba(0,0,0,0.2)"
+                }
+            },
+            html.div(
+                {"style": {"display": "flex", "justifyContent": "space-between", "alignItems": "center"}},
+                html.h4(
+                    {
+                        "on_click": toggle_day(date),
+                        "style": {"cursor": "pointer", "color": "#6dd5ed"}
+                    },
+                    f"{'▼' if date in expanded_days else '▶'} {date}"
+                ),
+                html.button({"on_click": open_modal(date), "style": {"border": "none", "background": "none", "color": "#aaa", "cursor": "pointer"}}, "📊")
+            ),
+            html.div(
+                {
+                    "style": {
+                        "width": "100%",
+                        "height": "6px",
+                        "background": "#444",
+                        "borderRadius": "3px",
+                        "marginTop": "6px"
+                    }
+                },
+                html.div(
+                    {
+                        "style": {
+                            "width": f"{percent}%",
+                            "height": "100%",
+                            "background": "#4caf50",
+                            "borderRadius": "3px"
+                        }
+                    }
+                )
+            ),
+            html.div(
+                *[
+                    html.div(
+                        {
+                            "style": {
+                                "marginTop": "8px",
+                                "padding": "8px",
+                                "borderRadius": "6px",
+                                "backgroundColor": "#e3f2fd" if b["block"] == "study" else "#fce4ec",
+                                "display": "flex",
+                                "alignItems": "center",
+                                "justifyContent": "space-between"
+                            }
+                        },
+                        html.input({
+                            "type": "checkbox",
+                            "checked": f"{date}-{i}" in completed_tasks,
+                            "on_change": toggle_complete(f"{date}-{i}")
+                        }),
+                        html.span({}, f"{b['course']}: {b['block']} for {b['duration']} min")
+                    )
+                    for i, b in enumerate(blocks)
+                ] if date in expanded_days else []
+            )
+        ))
+
+    # Modal
+    if modal_day:
+        view.append(
+            html.div(
+                {
+                    "style": {
+                        "position": "fixed",
+                        "top": 0,
+                        "left": 0,
+                        "width": "100vw",
+                        "height": "100vh",
+                        "backgroundColor": "rgba(0,0,0,0.6)",
+                        "display": "flex",
+                        "justifyContent": "center",
+                        "alignItems": "center",
+                        "zIndex": 1000
+                    }
+                },
+                html.div(
+                    {
+                        "style": {
+                            "backgroundColor": "#fff",
+                            "padding": "20px",
+                            "borderRadius": "8px",
+                            "maxWidth": "400px",
+                            "width": "90%",
+                            "color": "#333"
+                        }
+                    },
+                    html.h3({}, f"Schedule for {modal_day}"),
+                    html.ul(
+                        *[html.li({}, f"{b['course']}: {b['block']} – {b['duration']} min") for b in grouped[modal_day]]
+                    ),
+                    html.button({"on_click": close_modal}, "Close")
+                )
+            )
+        )
+
+    return html.div({}, *view)
 
 def form_input(label, value, setter, input_type, placeholder="", min_val=None):
     return html.div(
