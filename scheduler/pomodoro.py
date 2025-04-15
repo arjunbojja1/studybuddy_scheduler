@@ -17,21 +17,35 @@ class PomodoroScheduler:
                 if not date_range:
                     continue
                 
-                date_index = 0
             except (ValueError, KeyError) as err:
                 print(f"Error processing course {course['course']}: {err}")
                 continue # Invalid input, skip this course
             
+            date_index = 0
+            blocks = []
+            
             while time_remaining > 0:
                 duration = min(25, time_remaining)
                 assigned_date = date_range[date_index % len(date_range)]
-                schedule.append({
+                
+                blocks.append({
                     "course": course["course"],
-                    "block": "study",
+                    "block": "pomodoro",
                     "duration": duration,
                     "date": str(assigned_date)
                 })
+                
                 time_remaining -= duration
+                
+                if time_remaining > 0:
+                    blocks.append({
+                        "course": course["course"],
+                        "block": "break",
+                        "duration": 5,
+                        "date": str(assigned_date)
+                    })
                 date_index += 1
+                
+            schedule.extend(blocks)
                     
         return sorted(schedule, key=lambda x: x["date"])
