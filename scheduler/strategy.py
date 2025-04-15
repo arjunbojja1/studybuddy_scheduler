@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from scheduler.scheduler_engine import parse_date
+from scheduler.utils import parse_date
 
 # TODO: Fix UrgencyStrategy to correctly handle sorting by deadline.
 
