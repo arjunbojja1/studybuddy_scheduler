@@ -18,6 +18,6 @@ class SchedulerEngine:
         
 def _parse_date(self, date_str):
         try:
-            return datetime.strptime(date_str.strip(), "%md/%d/%Y").date()
+            return datetime.strptime(date_str.strip(), "%m/%d/%Y").date()
         except:
             return datetime.today().date()
