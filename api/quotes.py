@@ -8,5 +8,3 @@ class QuoteFetcher:
             return f"{quote['q']} - {quote['a']}"
         else:
             return "Failed to fetch quote"
-        
-print(QuoteFetcher().get_quote())
