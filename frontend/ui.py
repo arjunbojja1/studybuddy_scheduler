@@ -6,9 +6,9 @@ import random
 
 def radial_gradient(hovered):
     if hovered:
-        return "radial-gradient(circle at center, #2b2d42, #1a1b2f)"
+        return "radial-gradient(circle at center, #e0f7fa, #c3e6cb, #f0f4f8)"
     else:
-        return "radial-gradient(circle at top left, #1a1b2f, #121317)"
+        return "radial-gradient(circle at top left, #f0f4f8, #e4eaf1)"
 
 
 @component
@@ -146,7 +146,7 @@ def StudyBuddyUI():
         html.div(
             {"style": {
                 "position": "relative",
-                "backgroundColor": "#1f1f2e",
+                "backgroundColor": "#fefefe",
                 "padding": "40px",
                 "maxWidth": "700px",
                 "margin": "auto",
@@ -245,11 +245,10 @@ def StudyBuddyUI():
 
             html.div(
                 {"style": {
-                    "backgroundColor": "#2d2e3e",
-                    "color": "#e0e0e0",
+                    "backgroundColor": "#ffffff",
                     "padding": "20px",
                     "borderRadius": "10px",
-                    "boxShadow": "0 0 12px rgba(255, 255, 255, 0.05)"
+                    "boxShadow": "0 0 8px rgba(0, 0, 0, 0.05)"
                 }},
                 html.h3({"style": {"color": "#343a40"}}, "Your Schedule"),
                 html.pre({"style": {"whiteSpace": "pre-wrap", "color": "#495057", "fontSize": "15px"}}, result),
@@ -280,8 +279,6 @@ def input_style():
         "padding": "10px",
         "marginTop": "6px",
         "border": "1px solid #ced4da",
-        "backgroundColor": '#2b2d42',
-        "color": "white",
         "borderRadius": "6px",
         "fontSize": "16px",
         "boxSizing": "border-box"
@@ -292,13 +289,13 @@ def label_style():
     return {
         "fontWeight": "600",
         "fontSize": "15px",
-        "color": "#ddd"
+        "color": "#222"
     }
 
 
 def button_style(hovered):
     return {
-        "backgroundColor": "#00b894" if hovered else "#019875",
+        "backgroundColor": "#45a049" if hovered else "#4CAF50",
         "color": "white",
         "padding": "10px 20px",
         "border": "none",
