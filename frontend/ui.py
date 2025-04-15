@@ -1,5 +1,6 @@
 from reactpy import component, html, use_state, event
 from api.quotes import QuoteFetcher
+from scheduler.pomodoro import PomodoroScheduler
 import random
 
 
@@ -48,7 +49,14 @@ def StudyBuddyUI():
 
     @event(prevent_default=True)
     async def handle_submit(event):
-        set_result("This is a placeholder for the actual scheduling aspect using multiple classes.")
+        if strategy == "pomodoro":
+            scheduler = PomodoroScheduler()
+            schedule_blocks = scheduler.schedule(course_entries)
+            result_text = "\n".join(f"{block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
+        else:
+            result_text = "Strategy not yet implemented."
+            
+        set_result(result_text)
         set_quote(QuoteFetcher().get_quote())
 
     return html.div(
