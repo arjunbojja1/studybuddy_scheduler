@@ -1,6 +1,6 @@
 from reactpy import component, html, use_state, event
 from api.quotes import QuoteFetcher
-from scheduler.pomodoro import PomodoroScheduler
+from scheduler.scheduler_engine import SchedulerEngine
 import random
 
 
@@ -49,12 +49,14 @@ def StudyBuddyUI():
 
     @event(prevent_default=True)
     async def handle_submit(event):
-        if strategy == "pomodoro":
-            scheduler = PomodoroScheduler()
-            schedule_blocks = scheduler.schedule(course_entries)
-            result_text = "\n".join(f"{block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
-        else:
-            result_text = "Strategy not yet implemented."
+        # Cgeck if all entries are filled
+        if not all(entry["course"] and entry["deadline"] and entry["hours"] for entry in course_entries):
+            set_result("Please fill in all fields.")
+            return
+        
+        scheduler = SchedulerEngine(strategy=strategy)
+        schedule_blocks = scheduler.generate_schedule(course_entries)
+        result_text = "\n".join(f"{block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
             
         set_result(result_text)
         set_quote(QuoteFetcher().get_quote())

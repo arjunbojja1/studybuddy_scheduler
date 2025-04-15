@@ -4,12 +4,17 @@ class SchedulingStrategy:
     
 class UrgencyStrategy(SchedulingStrategy):
     def schedule(self, courses):
-        return sorted(courses, key=lambda course: course.deadline)
+        sorted_courses = sorted(courses, key=lambda course: course['deadline'])
+        return [{"course": course['course'], "block": "study", "duration": int(course['hours']) * 60} for course in sorted_courses]
     
 class EvenDistributionStrategy(SchedulingStrategy):
     def schedule(self, courses):
-        total_time = sum(course.estimated_time for course in courses)
+        total_time = sum(int(course['hours']) for course in courses)
+        
+        if total_time == 0:
+            return []
+        
         return [
-            {"name": course.name, "allocated_time": course.estimated_time / total_time * 100}
+            {"course": course['course'], "block": "study", "duration": int(course['hours']) * 60}
             for course in courses
         ]
