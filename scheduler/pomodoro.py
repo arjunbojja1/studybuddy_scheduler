@@ -19,17 +19,17 @@ class PomodoroScheduler:
                 if not date_range:
                     continue
                 
+                date_index = 0
             except (ValueError, KeyError):
                 continue # Invalid input, skip this course
             
-            date_index = 0
             while time_remaining > 0:
                 duration = min(25, time_remaining)
                 schedule.append({
                     "course": course["course"],
                     "block": "study",
                     "duration": duration,
-                    "date": str(date_range[date_index])
+                    "date": str(date_range[date_index % len(date_range)])
                 })
                 time_remaining -= duration
                 date_index += 1
