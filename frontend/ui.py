@@ -4,6 +4,7 @@ from datetime import datetime
 import random
 
 from scheduler.scheduler_engine import SchedulerEngine
+from scheduler.utils import generate_pie_chart
 from api.quotes import QuoteFetcher
 
 
@@ -301,17 +302,25 @@ def CalendarView(schedule_blocks):
     for date in sorted(grouped.keys()):
         blocks = grouped[date]
         total = sum(b["duration"] for b in blocks if b["block"] == "study")
-        done = sum(b["duration"] for i, b in enumerate(blocks) if f"{date}-{i}" in completed_tasks and b["block"] == "study")
+        done = sum(
+            b["duration"] for i, b in enumerate(blocks)
+            if f"{date}-{i}" in completed_tasks and b["block"] == "study"
+        )
         percent = int((done / total) * 100) if total else 0
+
+        is_expanded = date in expanded_days
+        chart_base64 = generate_pie_chart(blocks) if is_expanded else ""
 
         view.append(html.div(
             {
                 "style": {
-                    "backgroundColor": "#292b40",
-                    "borderRadius": "8px",
-                    "padding": "12px",
-                    "marginBottom": "16px",
-                    "boxShadow": "0 0 8px rgba(0,0,0,0.2)"
+                    "backgroundColor": "#f8f9fa",
+                    "border": "1px solid #e0e0e0",
+                    "borderRadius": "10px",
+                    "padding": "16px",
+                    "marginBottom": "20px",
+                    "boxShadow": "0 4px 10px rgba(0, 0, 0, 0.08)",
+                    "transition": "all 0.3s ease"
                 }
             },
             html.div(
@@ -319,20 +328,29 @@ def CalendarView(schedule_blocks):
                 html.h4(
                     {
                         "on_click": toggle_day(date),
-                        "style": {"cursor": "pointer", "color": "#6dd5ed"}
+                        "style": {"cursor": "pointer", "color": "#007acc", "margin": 0}
                     },
-                    f"{'▼' if date in expanded_days else '▶'} {datetime.strptime(date, '%Y-%m-%d').strftime('%B %d, %Y')}"
+                    f"{'▼' if is_expanded else '▶'} {datetime.strptime(date, '%Y-%m-%d').strftime('%B %d, %Y')}"
                 ),
-                html.button({"on_click": open_modal(date), "style": {"border": "none", "background": "none", "color": "#aaa", "cursor": "pointer"}}, "📊")
+                html.button({
+                    "on_click": open_modal(date),
+                    "style": {
+                        "border": "none",
+                        "background": "none",
+                        "color": "#888",
+                        "cursor": "pointer",
+                        "fontSize": "18px"
+                    }
+                }, "📊")
             ),
             html.div(
                 {
                     "style": {
                         "width": "100%",
                         "height": "6px",
-                        "background": "#444",
+                        "background": "#dee2e6",
                         "borderRadius": "3px",
-                        "marginTop": "6px"
+                        "marginTop": "8px"
                     }
                 },
                 html.div(
@@ -340,7 +358,7 @@ def CalendarView(schedule_blocks):
                         "style": {
                             "width": f"{percent}%",
                             "height": "100%",
-                            "background": "#4caf50",
+                            "background": "#28a745",
                             "borderRadius": "3px"
                         }
                     }
@@ -351,13 +369,15 @@ def CalendarView(schedule_blocks):
                     html.div(
                         {
                             "style": {
-                                "marginTop": "8px",
-                                "padding": "8px",
+                                "marginTop": "10px",
+                                "padding": "10px 14px",
                                 "borderRadius": "6px",
-                                "backgroundColor": "#e3f2fd" if b["block"] == "study" else "#fce4ec",
+                                "backgroundColor": "#e9f7fd" if b["block"] == "study" else "#fce4ec",
                                 "display": "flex",
                                 "alignItems": "center",
-                                "justifyContent": "space-between"
+                                "justifyContent": "space-between",
+                                "fontSize": "15px",
+                                "color": "#333"
                             }
                         },
                         html.input({
@@ -368,8 +388,19 @@ def CalendarView(schedule_blocks):
                         html.span({}, f"{b['course']}: {b['block']} for {b['duration']} min")
                     )
                     for i, b in enumerate(blocks)
-                ] if date in expanded_days else []
-            )
+                ] if is_expanded else []
+            ),
+            html.div(
+                html.img({
+                    "src": f"data:image/png;base64,{chart_base64}",
+                    "style": {
+                        "marginTop": "15px",
+                        "borderRadius": "6px",
+                        "maxWidth": "100%",
+                        "boxShadow": "0 2px 6px rgba(0,0,0,0.1)"
+                    }
+                })
+            ) if chart_base64 else None
         ))
 
     # Modal
@@ -395,17 +426,29 @@ def CalendarView(schedule_blocks):
                         "style": {
                             "backgroundColor": "#fff",
                             "padding": "20px",
-                            "borderRadius": "8px",
+                            "borderRadius": "10px",
                             "maxWidth": "400px",
                             "width": "90%",
-                            "color": "#333"
+                            "color": "#333",
+                            "boxShadow": "0 8px 20px rgba(0, 0, 0, 0.25)"
                         }
                     },
-                    html.h3({}, f"Schedule for {modal_day}"),
+                    html.h3({}, f"Schedule for {datetime.strptime(modal_day, '%Y-%m-%d').strftime('%B %d, %Y')}"),
                     html.ul(
                         *[html.li({}, f"{b['course']}: {b['block']} – {b['duration']} min") for b in grouped[modal_day]]
                     ),
-                    html.button({"on_click": close_modal}, "Close")
+                    html.button({
+                        "on_click": close_modal,
+                        "style": {
+                            "marginTop": "16px",
+                            "padding": "8px 16px",
+                            "border": "none",
+                            "backgroundColor": "#007acc",
+                            "color": "#fff",
+                            "borderRadius": "6px",
+                            "cursor": "pointer"
+                        }
+                    }, "Close")
                 )
             )
         )
