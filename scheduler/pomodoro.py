@@ -15,7 +15,8 @@ class PomodoroScheduler:
                     continue
                 
                 date_range = [today + timedelta(days=i) for i in range((deadline - today).days + 1)]
-                if len(date_range) == 0:
+                
+                if not date_range:
                     continue
                 
             except (ValueError, KeyError):
@@ -31,6 +32,6 @@ class PomodoroScheduler:
                     "date": str(date_range[date_index])
                 })
                 time_remaining -= duration
-                date_index = (date_index + 1) % len(date_range)
+                date_index += 1
                     
         return schedule
