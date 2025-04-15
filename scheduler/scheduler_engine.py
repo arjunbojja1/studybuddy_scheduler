@@ -1,5 +1,4 @@
-from scheduler.strategy import EvenDistributionStrategy
-from scheduler.strategy import UrgencyStrategy
+from scheduler.strategy import EvenDistributionStrategy, UrgencyStrategy
 from scheduler.pomodoro import PomodoroScheduler
 
 class SchedulerEngine:

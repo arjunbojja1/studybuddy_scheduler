@@ -56,7 +56,7 @@ def StudyBuddyUI():
         
         scheduler = SchedulerEngine(strategy=strategy)
         schedule_blocks = scheduler.generate_schedule(course_entries)
-        result_text = "\n".join(f"{block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
+        result_text = "\n".join(f"{block.get('date', 'Today')} - {block['course']}: {block['block'].capitalize()} for {block['duration']} min" for block in schedule_blocks)
             
         set_result(result_text)
         set_quote(QuoteFetcher().get_quote())
