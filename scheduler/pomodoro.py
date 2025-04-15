@@ -27,7 +27,6 @@ class PomodoroScheduler:
                     "date": str(current_day)
                 })
                 time_remaining -= duration
-                current_day += timedelta(days=1)
                 if (current_day + timedelta(days=1)) > deadline:
                     current_day = today
                 else:
