@@ -1,8 +1,10 @@
 from reactpy import component, html, use_state, event
-from api.quotes import QuoteFetcher
-from scheduler.scheduler_engine import SchedulerEngine
 from collections import defaultdict
+from datetime import datetime
 import random
+
+from scheduler.scheduler_engine import SchedulerEngine
+from api.quotes import QuoteFetcher
 
 
 def radial_gradient(hovered):
@@ -319,7 +321,7 @@ def CalendarView(schedule_blocks):
                         "on_click": toggle_day(date),
                         "style": {"cursor": "pointer", "color": "#6dd5ed"}
                     },
-                    f"{'▼' if date in expanded_days else '▶'} {date}"
+                    f"{'▼' if date in expanded_days else '▶'} {datetime.strptime(date, '%Y-%m-%d').strftime('%B %d, %Y')}"
                 ),
                 html.button({"on_click": open_modal(date), "style": {"border": "none", "background": "none", "color": "#aaa", "cursor": "pointer"}}, "📊")
             ),
