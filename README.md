@@ -1,7 +1,7 @@
 # StudyBuddy Scheduler
 
-StudyBuddy Scheduler is a smart and interactive planner that helps students create study schedules based on their avaibility, workload, and deadlines.
-It offers several scheduling options and displays motivational quotes utilizing ZenQuotes API to keep users inspired while they work.
+StudyBuddy Scheduler is a smart and interactive planner that helps students create study schedules based on their availability, workload, and deadlines. 
+It offers several scheduling options and displays motivational quotes utilizing the ZenQuotes API to keep users inspired while they work.
 
 StudyBuddy Scheduler is built in Python and provides a web based interface using ReactPy and runs from the command line.
 
