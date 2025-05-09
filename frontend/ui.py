@@ -52,6 +52,12 @@ def StudyBuddyUI():
     def cancel_delete():
         set_pending_delete_index(None)
         set_show_modal(False)
+        
+    def handle_export_csv():
+        pass
+    
+    def handle_export_txt():
+        pass
     
     @event(prevent_default=True)
     async def handle_submit(event):
@@ -234,6 +240,7 @@ def StudyBuddyUI():
                 ),
 
                 html.div(
+                    {"style": {"marginTop": "20px", "textAlign": "center"}},
                     html.button(
                         {
                             "type": "submit",
@@ -242,28 +249,27 @@ def StudyBuddyUI():
                             "on_mouse_leave": lambda _: set_hovered(False)
                         },
                         "Generate Schedule"
-                    )
-                ),
-                html.div(
-                    {"style": {"display": "flex", "gap": "10px", "marginTop": "20px", "justifyContent": "center"}},
-                    html.button(
-                        {
-                            "type": "button",
-                            "style": button_style(False),
-                            "on_click": lambda _: handle_export_csv()
-                        },
-                        "Export to CSV"
                     ),
-                    html.button(
-                        {
-                            "type": "button",
-                            "style": button_style(False),
-                            "on_click": lambda _: handle_export_txt()
-                        },
-                        "Export to TXT"
+                    html.div(
+                        {"style": {"marginTop": "12px", "display": "flex", "gap": "10px", "justifyContent": "center"}},
+                        html.button(
+                            {
+                                "type": "button",
+                                "style": button_style(False),
+                                "on_click": lambda _: handle_export_csv()
+                            },
+                            "Export to CSV"
+                        ),
+                        html.button(
+                            {
+                                "type": "button",
+                                "style": button_style(False),
+                                "on_click": lambda _: handle_export_txt()
+                            },
+                            "Export to TXT"
+                        )
                     )
-                ),
-
+                )
             ),
 
             html.hr({"style": {"margin": "30px 0"}}),
