@@ -55,7 +55,7 @@ def StudyBuddyUI():
         set_show_modal(False)
         
     def get_download_link(filetype):
-        if not generated_schedule:
+        if not generated_schedule or len(generated_schedule) == 0:
             return "#"
         encoded = urllib.parse.quote(json.dumps(generated_schedule))
         return f"/download/{filetype}?data={encoded}"
@@ -254,31 +254,37 @@ def StudyBuddyUI():
                     ),
                     html.div(
                         {"style": {"marginTop": "12px", "display": "flex", "gap": "10px", "justifyContent": "center"}},
-                        html.a(
-                            {
-                                "href": get_download_link("csv"),
-                                "download": "schedule.csv",
-                                "style": {
-                                    **button_style(False),
-                                    "textDecoration": "none"
-                                }
-                            },
-                            "Export to CSV"
-                        ),
-                        html.a(
-                            {
-                                "href": get_download_link("txt"),
-                                "download": "schedule.txt",
-                                "style": {
-                                    **button_style(False),
-                                    "textDecoration": "none"
-                                }
-                            },
-                            "Export to TXT"
-                        )
+                            html.a(
+                                {
+                                    "href": get_download_link("csv"),
+                                    "download": "schedule.csv",
+                                    "style": {
+                                        **button_style(False),
+                                        "textDecoration": "none",
+                                        "pointerEvents": "auto" if generated_schedule else "none",
+                                        "opacity": "1.0" if generated_schedule else "0.5",
+                                        "cursor": "pointer" if generated_schedule else "not-allowed"
+                                    }
+                                },
+                                "Export to CSV"
+                            ),
+                            html.a(
+                                {
+                                    "href": get_download_link("txt"),
+                                    "download": "schedule.txt",
+                                    "style": {
+                                        **button_style(False),
+                                        "textDecoration": "none",
+                                        "pointerEvents": "auto" if generated_schedule else "none",
+                                        "opacity": "1.0" if generated_schedule else "0.5",
+                                        "cursor": "pointer" if generated_schedule else "not-allowed"
+                                    }
+                                },
+                                "Export to TXT"
+                            )
+                         )
                     )
-                )
-            ),
+                ),
 
             html.hr({"style": {"margin": "30px 0"}}),
 

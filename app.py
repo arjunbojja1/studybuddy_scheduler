@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import Response
+from fastapi.responses import Response, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from reactpy.backend.fastapi import configure
+from reactpy.backend.fastapi import configure, Options
 import json
 import uvicorn
 
@@ -20,20 +20,17 @@ app.add_middleware(
 )
 
 # Configure ReactPy
-configure(app, StudyBuddyUI)
+configure(app, StudyBuddyUI, options=Options(url_prefix="/app"))
 
 # Create exporter
 exporter = FileExporter()
 
 @app.get("/download/{filetype}")
 async def download_schedule(filetype: str, data: str):
-    """API endpoint to download schedule data as either CSV or TXT.
 
-    Args:
-        filetype (str): Type of file to download (csv or txt).
-        data (str): JSON string containing schedule data.
-    """
-    
+    if not data:
+        return Response("No data provided", status_code=400)
+
     try:
         # Parse JSON data
         schedule = json.loads(data)
@@ -56,6 +53,10 @@ async def download_schedule(filetype: str, data: str):
         )
     else:
         return Response("Invalid file type", status_code=400)
+    
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/app")
     
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
