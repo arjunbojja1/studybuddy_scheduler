@@ -2,7 +2,10 @@ from reactpy import component, html, use_state, event
 from collections import defaultdict
 from datetime import datetime
 import random
+import base64
+import urllib.parse
 
+from exporter.file_exporter import FileExporter
 from scheduler.scheduler_engine import SchedulerEngine
 from scheduler.utils import generate_pie_chart
 from api.quotes import QuoteFetcher
@@ -49,7 +52,7 @@ def StudyBuddyUI():
     def cancel_delete():
         set_pending_delete_index(None)
         set_show_modal(False)
-
+    
     @event(prevent_default=True)
     async def handle_submit(event):
         # Check if all entries are filled
@@ -240,7 +243,27 @@ def StudyBuddyUI():
                         },
                         "Generate Schedule"
                     )
-                )
+                ),
+                html.div(
+                    {"style": {"display": "flex", "gap": "10px", "marginTop": "20px", "justifyContent": "center"}},
+                    html.button(
+                        {
+                            "type": "button",
+                            "style": button_style(False),
+                            "on_click": lambda _: handle_export_csv()
+                        },
+                        "Export to CSV"
+                    ),
+                    html.button(
+                        {
+                            "type": "button",
+                            "style": button_style(False),
+                            "on_click": lambda _: handle_export_txt()
+                        },
+                        "Export to TXT"
+                    )
+                ),
+
             ),
 
             html.hr({"style": {"margin": "30px 0"}}),
