@@ -13,6 +13,10 @@ class PomodoroScheduler:
                 start_date = datetime.today().date()
                 
                 date_range = [start_date + timedelta(days=i) for i in range((deadline - start_date).days + 1)]
+
+                if (deadline - start_date).days < 0:
+                    print(f"Skipping course '{course['course']}' — deadline has already passed.")
+                    continue
                 
                 if not date_range:
                     continue
