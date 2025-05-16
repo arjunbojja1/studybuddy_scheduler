@@ -1,8 +1,29 @@
+"""Pomodoro scheduling for the StudyBuddy Scheduler.
+
+This script defines the PomodoroScheduler class, which generates study
+schedules using the Pomodoro technique.
+"""
+
 from datetime import datetime, timedelta
 from scheduler.utils import parse_date
 
 class PomodoroScheduler:
+    """Schedules study sessions using the Pomodoro technique.
+
+    Breaks study time into 25-minute study blocks followed by 5-minute breaks.
+    """
+
     def schedule(self, courses):
+        """Generates a Pomodoro-style schedule for the given courses.
+
+        Args:
+            courses (list of dict): List of courses, where each course is a
+                dictionary containing 'course', 'deadline', and 'hours' keys.
+
+        Returns:
+            list of dict: A sorted list of schedule blocks, where each block
+                contains 'course', 'block', 'duration', and 'date' keys.
+        """
         schedule = []
         
         for course in sorted(courses, key=lambda c: parse_date(c['deadline'])):

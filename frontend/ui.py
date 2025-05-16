@@ -1,3 +1,10 @@
+"""Frontend UI for the StudyBuddy Scheduler.
+
+This script defines the ReactPy components for the StudyBuddy Scheduler
+application. It includes the main UI for inputting courses, generating
+schedules, and displaying results.
+"""
+
 from reactpy import component, html, use_state, event
 from collections import defaultdict
 from datetime import datetime
@@ -12,6 +19,14 @@ from api.quotes import QuoteFetcher
 
 
 def radial_gradient(hovered):
+    """Generates a radial gradient based on hover state.
+
+    Args:
+        hovered (bool): Whether the element is hovered.
+
+    Returns:
+        str: CSS gradient string.
+    """
     if hovered:
         return "radial-gradient(circle at center, #e0f7fa, #c3e6cb, #f0f4f8)"
     else:
@@ -19,6 +34,12 @@ def radial_gradient(hovered):
             
 @component
 def StudyBuddyUI():
+    """Main UI component for the StudyBuddy Scheduler.
+
+    Allows users to input courses, deadlines, and hours, select a scheduling
+    strategy, and generate a study schedule. Users can also export the schedule
+    and view motivational quotes.
+    """
     course_entries, set_course_entries = use_state([
         {"course": "", "deadline": "", "hours": ""}
     ])
@@ -32,18 +53,32 @@ def StudyBuddyUI():
     pending_delete_index, set_pending_delete_index = use_state(None)
 
     def add_course_entry():
+        """Adds a new empty course entry."""
         set_course_entries(course_entries + [{"course": "", "deadline": "", "hours": ""}])
 
     def update_course_field(index, field, value):
+        """Updates a specific field in a course entry.
+
+        Args:
+            index (int): Index of the course entry.
+            field (str): Field to update ('course', 'deadline', or 'hours').
+            value (str): New value for the field.
+        """
         updated = course_entries[:]
         updated[index][field] = value
         set_course_entries(updated)
 
     def ask_to_delete(index):
+        """Prompts the user to confirm deletion of a course entry.
+
+        Args:
+            index (int): Index of the course entry to delete.
+        """
         set_pending_delete_index(index)
         set_show_modal(True)
 
     def confirm_delete():
+        """Deletes the selected course entry after confirmation."""
         if pending_delete_index is not None and len(course_entries) > 1:
             updated = course_entries[:pending_delete_index] + course_entries[pending_delete_index + 1:]
             set_course_entries(updated)
@@ -51,10 +86,19 @@ def StudyBuddyUI():
         set_show_modal(False)
 
     def cancel_delete():
+        """Cancels the deletion of a course entry."""
         set_pending_delete_index(None)
         set_show_modal(False)
         
     def get_download_link(filetype):
+        """Generates a download link for the schedule.
+
+        Args:
+            filetype (str): File type ('csv' or 'txt').
+
+        Returns:
+            str: Download link.
+        """
         if not generated_schedule or len(generated_schedule) == 0:
             return "#"
         encoded = urllib.parse.quote(json.dumps(generated_schedule))
@@ -62,6 +106,11 @@ def StudyBuddyUI():
     
     @event(prevent_default=True)
     async def handle_submit(event):
+        """Handles form submission to generate a schedule.
+
+        Args:
+            event: The form submission event.
+        """
         # Check if all entries are filled
         if not all(entry["course"] and entry["deadline"] and entry["hours"] for entry in course_entries):
             set_result("Please fill in all fields.")
@@ -305,6 +354,14 @@ def StudyBuddyUI():
 
 @component
 def CalendarView(schedule_blocks):
+    """Displays the generated schedule in a calendar view.
+
+    Args:
+        schedule_blocks (list): List of schedule blocks.
+
+    Returns:
+        ReactPy component: Rendered calendar view.
+    """
     expanded_days, set_expanded_days = use_state(set())
     completed_tasks, set_completed_tasks = use_state(set())
     modal_day, set_modal_day = use_state(None)
@@ -314,6 +371,11 @@ def CalendarView(schedule_blocks):
         grouped[block["date"]].append(block)
 
     def toggle_day(date):
+        """Toggles the expansion of a day's schedule.
+
+        Args:
+            date (str): Date to toggle.
+        """
         def handler(_):
             expanded = set(expanded_days)
             if date in expanded:
@@ -324,6 +386,11 @@ def CalendarView(schedule_blocks):
         return handler
 
     def toggle_complete(block_key):
+        """Marks a schedule block as complete or incomplete.
+
+        Args:
+            block_key (str): Unique key for the schedule block.
+        """
         def handler(_):
             updated = set(completed_tasks)
             if block_key in updated:
@@ -334,11 +401,17 @@ def CalendarView(schedule_blocks):
         return handler
 
     def open_modal(date):
+        """Opens a modal to display detailed schedule for a day.
+
+        Args:
+            date (str): Date for which to display details.
+        """
         def handler(_):
             set_modal_day(date)
         return handler
 
     def close_modal(_):
+        """Closes the modal."""
         set_modal_day(None)
 
     view = []
@@ -447,7 +520,7 @@ def CalendarView(schedule_blocks):
         ))
 
     # Modal
-    if modal_day:
+    if (modal_day):
         view.append(
             html.div(
                 {
@@ -499,6 +572,19 @@ def CalendarView(schedule_blocks):
     return html.div({}, *view)
 
 def form_input(label, value, setter, input_type, placeholder="", min_val=None):
+    """Creates a form input field.
+
+    Args:
+        label (str): Label for the input field.
+        value (str): Current value of the input field.
+        setter (function): Function to update the value.
+        input_type (str): Type of the input field (e.g., 'text', 'number').
+        placeholder (str, optional): Placeholder text. Defaults to "".
+        min_val (str, optional): Minimum value for the input. Defaults to None.
+
+    Returns:
+        ReactPy component: Rendered input field.
+    """
     return html.div(
         {"style": {"marginBottom": "12px"}},
         html.label({"style": label_style()}, label),
@@ -513,6 +599,11 @@ def form_input(label, value, setter, input_type, placeholder="", min_val=None):
 
 
 def input_style():
+    """Defines the CSS style for input fields.
+
+    Returns:
+        dict: CSS style dictionary.
+    """
     return {
         "width": "100%",
         "padding": "10px",
@@ -525,6 +616,11 @@ def input_style():
 
 
 def label_style():
+    """Defines the CSS style for labels.
+
+    Returns:
+        dict: CSS style dictionary.
+    """
     return {
         "fontWeight": "600",
         "fontSize": "15px",
@@ -533,6 +629,14 @@ def label_style():
 
 
 def button_style(hovered):
+    """Defines the CSS style for buttons.
+
+    Args:
+        hovered (bool): Whether the button is hovered.
+
+    Returns:
+        dict: CSS style dictionary.
+    """
     return {
         "backgroundColor": "#45a049" if hovered else "#4CAF50",
         "color": "white",
@@ -547,6 +651,11 @@ def button_style(hovered):
 
 
 def floating_background():
+    """Creates a floating background animation.
+
+    Returns:
+        ReactPy component: Rendered floating background.
+    """
     letters = ["S", "T", "U", "D", "Y", "B", "U", "D", "D", "Y"]
     elements = []
 
@@ -582,6 +691,11 @@ def floating_background():
 
 
 def keyframes_style():
+    """Defines keyframe animations for floating elements.
+
+    Returns:
+        ReactPy component: Rendered keyframe styles.
+    """
     return html.style(
         """
         @keyframes floatUp {
@@ -594,6 +708,11 @@ def keyframes_style():
 
 
 def modal_keyframes():
+    """Defines keyframe animations for modal transitions.
+
+    Returns:
+        ReactPy component: Rendered keyframe styles.
+    """
     return html.style(
         """
         @keyframes fadeSlideIn {

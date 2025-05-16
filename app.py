@@ -8,6 +8,12 @@ import uvicorn
 from exporter.file_exporter import FileExporter
 from frontend.ui import StudyBuddyUI
 
+"""Main application script for the StudyBuddy Scheduler.
+
+This script sets up a FastAPI application with ReactPy for the frontend
+and provides endpoints for downloading schedules in CSV or text format.
+"""
+
 # Create FastAPI app
 app = FastAPI()
 
@@ -27,7 +33,15 @@ exporter = FileExporter()
 
 @app.get("/download/{filetype}")
 async def download_schedule(filetype: str, data: str):
+    """Endpoint to download the schedule in the specified file format.
 
+    Args:
+        filetype (str): The file format ('csv' or 'txt').
+        data (str): The schedule data in JSON format.
+
+    Returns:
+        Response: A file response with the schedule in the requested format.
+    """
     if not data:
         return Response("No data provided", status_code=400)
 
@@ -56,6 +70,7 @@ async def download_schedule(filetype: str, data: str):
     
 @app.get("/")
 async def root():
+    """Redirects the root URL to the ReactPy application."""
     return RedirectResponse(url="/app")
     
 if __name__ == "__main__":

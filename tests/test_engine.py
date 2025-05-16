@@ -1,3 +1,9 @@
+"""Unit tests for the SchedulerEngine.
+
+This script tests the functionality of the SchedulerEngine class,
+ensuring that it generates schedules using different strategies.
+"""
+
 import pytest
 import sys
 import os
@@ -8,12 +14,21 @@ from scheduler.scheduler_engine import SchedulerEngine
 
 @pytest.fixture
 def sample_courses():
+    """Provides a sample list of courses for testing.
+
+    Returns:
+        list of dict: A list of courses with 'course', 'deadline', and 'hours' keys.
+    """
     return [
         {"course": "Math", "deadline": "2023-12-01", "hours": 10},
         {"course": "Science", "deadline": "2023-11-15", "hours": 5}
     ]
 
 def test_urgency_strategy(sample_courses):
+    """Tests the urgency-based scheduling strategy.
+
+    Ensures that courses with earlier deadlines are prioritized.
+    """
     engine = SchedulerEngine(strategy="urgency")
     schedule = engine.generate_schedule(sample_courses)
 
@@ -23,6 +38,10 @@ def test_urgency_strategy(sample_courses):
     assert "Science" in course_names
 
 def test_even_distribution_strategy(sample_courses):
+    """Tests the even distribution scheduling strategy.
+
+    Ensures that study time is distributed evenly across courses.
+    """
     engine = SchedulerEngine(strategy="even")
     schedule = engine.generate_schedule(sample_courses)
 

@@ -1,6 +1,17 @@
+"""Unit tests for the QuoteFetcher.
+
+This script tests the functionality of the QuoteFetcher class,
+ensuring that it returns valid quotes in the expected format.
+"""
+
 from api.quotes import QuoteFetcher
 
 def test_quotes():
+    """Tests the QuoteFetcher to ensure it returns a valid quote.
+
+    Verifies that the quote is a non-empty string, contains a hyphen
+    separating the quote and author, and both parts are non-empty.
+    """
     quote = QuoteFetcher().get_quote()
 
     assert isinstance(quote, str), "Quote should be a string"

@@ -1,14 +1,47 @@
+"""Scheduling strategies for the StudyBuddy Scheduler.
+
+This script defines abstract and concrete scheduling strategies, including
+urgency-based and even distribution strategies.
+"""
+
 from datetime import datetime, timedelta
 from scheduler.utils import parse_date
 
-# TODO: Fix UrgencyStrategy to correctly handle sorting by deadline.
-
 class SchedulingStrategy:
+    """Abstract base class for scheduling strategies."""
+
     def schedule(self, courses):
+        """Schedules study blocks for the given courses.
+
+        Args:
+            courses (list of dict): List of courses, where each course is a
+                dictionary containing 'course', 'deadline', and 'hours' keys.
+
+        Returns:
+            list of dict: A list of scheduled blocks.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
+        """
         raise NotImplementedError
-    
+
+
 class UrgencyStrategy(SchedulingStrategy):
+    """Schedules study blocks based on course deadlines.
+
+    Prioritizes courses with earlier deadlines.
+    """
+
     def schedule(self, courses):
+        """Generates a schedule based on urgency (earliest deadlines first).
+
+        Args:
+            courses (list of dict): List of courses, where each course is a
+                dictionary containing 'course', 'deadline', and 'hours' keys.
+
+        Returns:
+            list of dict: A list of scheduled blocks, sorted by date.
+        """
         today = datetime.today().date()
         schedule = []
         
@@ -40,7 +73,18 @@ class UrgencyStrategy(SchedulingStrategy):
         return schedule
             
 class EvenDistributionStrategy(SchedulingStrategy):
-    def schedule(self, courses): 
+    """Distributes study time evenly across the available days."""
+
+    def schedule(self, courses):
+        """Generates a schedule with evenly distributed study time.
+
+        Args:
+            courses (list of dict): List of courses, where each course is a
+                dictionary containing 'course', 'deadline', and 'hours' keys.
+
+        Returns:
+            list of dict: A list of scheduled blocks, evenly distributed by date.
+        """
         today = datetime.today().date()
         schedule = []     
         
@@ -69,4 +113,3 @@ class EvenDistributionStrategy(SchedulingStrategy):
                     })
                     
         return schedule
-            

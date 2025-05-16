@@ -1,3 +1,9 @@
+"""Unit tests for the FileExporter.
+
+This script tests the functionality of the FileExporter class, ensuring
+that schedules are correctly exported to CSV and plain text formats.
+"""
+
 import sys
 import os
 import pytest
@@ -9,6 +15,12 @@ from exporter.file_exporter import FileExporter
 
 @pytest.fixture
 def sample_schedule():
+    """Provides a sample schedule for testing.
+
+    Returns:
+        list of dict: A list of schedule blocks with 'course', 'block',
+        'duration', and 'date' keys.
+    """
     return [
         {"course": "Math", "block": "study", "duration": 60, "date": "2023-11-10"},
         {"course": "Science", "block": "review", "duration": 30, "date": "2023-11-10"},
@@ -16,6 +28,10 @@ def sample_schedule():
     ]
 
 def test_export_to_csv(sample_schedule):
+    """Tests exporting the schedule to CSV format.
+
+    Ensures that the CSV output includes headers and expected content.
+    """
     exporter = FileExporter()
     csv_output = exporter.export_to_csv(sample_schedule)
 
@@ -25,6 +41,10 @@ def test_export_to_csv(sample_schedule):
     assert csv_output.count("\n") >= 4  # Header + at least 3 rows
 
 def test_export_to_txt(sample_schedule):
+    """Tests exporting the schedule to plain text format.
+
+    Ensures that the text output is formatted correctly and includes expected content.
+    """
     exporter = FileExporter()
     txt_output = exporter.export_to_txt(sample_schedule)
 
@@ -32,5 +52,4 @@ def test_export_to_txt(sample_schedule):
     assert "2023-11-10 | Math | study | 60 min" in txt_output
     assert "2023-11-11 | Math | study | 90 min" in txt_output
     assert txt_output.count("\n") == 2  # 3 rows = 2 newlines
- 
- 
+
