@@ -11,7 +11,7 @@ This project was developed as part of a class assignment for the University of M
 ## Features
 
 - **User-Friendly Interface**: A browser-based UI built with ReactPy for seamless user interaction.
-- **Customizable Scheduling**: Input courses, deadlines, estimated time commitments, and preferred study hours.
+- **Customizable Scheduling**: Input courses, deadlines, and estimated time commitments.
 - **Multiple Scheduling Strategies**:
   - **Urgency-Based**: Prioritizes courses with earlier deadlines.
   - **Even Distribution**: Spreads study time evenly across available days.
